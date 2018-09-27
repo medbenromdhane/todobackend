@@ -1,0 +1,57 @@
+# used with the command docker-compose up agent then docker-compose up test from "cd-docker-ansible/todobackend/docker/dev" dir 
+# With the commands docker-compose kill and docker-compose rm -f  from "cd-docker-ansible/todobackend/docker/dev" dir we kill and remove all existence images that the composer runs
+test:
+  # is refrence to the application dir todobackend
+  build: ../../
+  dockerfile: docker/dev/Dockerfile
+  volumes_from:
+    - cache
+  links:
+    # is the hostname that will be added to /etc/hosts exampal:'172.0.0.2 db'
+    - db
+  environment:
+    DJANGO_SETTINGS_MODULE: todobackend.settings.test
+    MYSQL_HOST: db
+    MYSQL_USER: root
+    MYSQL_PASSWORD: password
+    TEST_OUTPUT_DIR: /reports
+
+builder:
+  build: ../../
+  dockerfile: docker/dev/Dockerfile
+  volumes:
+    - ../../target:/wheelhouse
+  volumes_from:
+    # Where we have the app source and dependencies
+    - cache
+  entrypoint: "entrypoint.sh"
+  command: ["pip", "wheel", "--no-index", "-f /build", "."]
+
+# It is the ansible container that will ensure for us that the db is up and running before attempt to connect to it with test container image 'test'
+agent:
+  image: medlinux:ansible
+  volumes:
+    - ../../ansible/probe.yml:/ansible/site.yml
+  links:
+    - db
+  environment:
+    PROBE_HOST: "db"
+    PROBE_PORT: "3306"
+  # command: ["probe.yml"]
+
+db: 
+  image: mysql:5.6
+  hostname: db
+  expose:
+    - "3306"
+  environment:
+    MYSQL_ROOT_PASSWORD: password
+
+cache:
+  build: ../../
+  dockerfile: docker/dev/Dockerfile
+  volumes:
+    - /tmp/cache:/cache
+    # Creating the build cache
+    - /build
+  entrypoint: "true"
