@@ -1,4 +1,4 @@
-FROM medlinux:todobackend-base
+FROM medbenromdhane/todobackend-base
 MAINTAINER Mohamed Ben Romdhane <medbenromdhane@hotmail.fr>
 
 # Install dev/build dependencies

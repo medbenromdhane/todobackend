@@ -20,7 +20,7 @@ app:
     - "--die-on-term"
 
 test:
-  image: medlinux:todobackend-specs
+  image: medbenromdhane/todobackend-specs
   links:
     - nginx
   environment:
@@ -59,7 +59,7 @@ db:
 
 # It is the ansible container that will ensure for us that the db is up and running before attempt to connect to it with test container image 'test'
 agent:
-  image: medlinux:ansible
+  image: medbenromdhane/ansible
   volumes:
     - ../../ansible/probe.yml:/ansible/site.yml
   links:

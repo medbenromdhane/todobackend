@@ -29,7 +29,7 @@ builder:
 
 # It is the ansible container that will ensure for us that the db is up and running before attempt to connect to it with test container image 'test'
 agent:
-  image: medlinux:ansible
+  image: medbenromdhane/ansible
   volumes:
     - ../../ansible/probe.yml:/ansible/site.yml
   links:

@@ -93,6 +93,7 @@ clean:
 	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) kill
 	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) rm -f -v
 	${INFO} "Removing dangling images..."
+	# Removing images that are no more used -f option for each filters
 	@ docker images -q -f dangling=true -f label=application=$(REPO_NAME) | xargs -I ARGS docker rmi -f ARGS
 	${INFO} "Clean complete"
 
